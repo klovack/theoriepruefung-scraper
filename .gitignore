@@ -1,2 +1,3 @@
 /scraped
 /__pycache__
+.env

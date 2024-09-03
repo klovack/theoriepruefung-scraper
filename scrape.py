@@ -10,7 +10,7 @@ from os import makedirs, path
 jsonpickle.set_preferred_backend('json')
 jsonpickle.set_encoder_options('json', ensure_ascii=False)
 
-folder_prefix = 'scraped'
+folder_prefix = config.scrape_folder_prefix
 no_category_name = 'no-category'
 no_sub_category_name = 'no-sub-category'
 all_categories: dict[str, dict[str, list[QuizQuestion]]] = {}
@@ -62,9 +62,9 @@ async def save_question(context, questions_list, category_name, sub_category_nam
         file_name = get_file_name(category_name, sub_category_name, resource_src, resource_type)
         
         if not path.exists(file_name):
-          makedirs(path.dirname(file_name), exist_ok=True)
-          with open(f'{file_name}', 'wb') as f:
-              f.write(content)
+            makedirs(path.dirname(file_name), exist_ok=True)
+            with open(f'{file_name}', 'wb') as f:
+                f.write(content)
 
     question_options: list[Locator] = await question_page.locator("div.body > ul.options li").all()
     options: list[str] = []
@@ -85,7 +85,10 @@ async def get_subcategories(page: Page, context: BrowserContext, sub_categories_
     for sub_category in sub_categories:
         sub_category_a_tag: Locator = sub_category.locator("a")
         sub_category_name = await sub_category_a_tag.inner_text()
-        sub_categories_dict[sub_category_name] = []
+
+        if (sub_category_name not in sub_categories_dict):
+            sub_categories_dict[sub_category_name] = []
+
         sub_category_link = await sub_category_a_tag.get_attribute("href")
         sub_category_page = await context.new_page()
         await sub_category_page.goto(sub_category_link)
@@ -102,7 +105,9 @@ async def get_subcategories(page: Page, context: BrowserContext, sub_categories_
         await sub_category_page.close()
 
     if len(sub_categories) == 0:
-        sub_categories_dict[no_sub_category_name] = []
+        if (no_sub_category_name not in sub_categories_dict):
+            sub_categories_dict[no_sub_category_name] = []
+
         await get_list_of_questions(page, context, sub_categories_dict[no_sub_category_name], category_name, no_sub_category_name)
 
 
@@ -117,7 +122,16 @@ async def scrape_autovio(page: Page, context: BrowserContext):
             break
         category_a_tag: Locator = category.locator("a")
         category_text = await category_a_tag.inner_text()
-        all_categories[category_text] = {}
+
+        if (config.use_existing):
+            existing_file_name = f'{folder_prefix}/{category_text}/data.json'
+            if path.exists(existing_file_name):
+                with open(existing_file_name, 'r', encoding='utf-8') as f:
+                    all_categories[category_text] = jsonpickle.decode(f.read())
+
+        if (category_text not in all_categories):
+            all_categories[category_text] = {}
+
         category_link = await category_a_tag.get_attribute("href")
         category_page = await context.new_page()
         print(f"Scraping {category_text}")
