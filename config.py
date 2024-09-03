@@ -19,8 +19,17 @@ categories_to_translate: dict[
 ] = {
     "Gefahrenlehre": {
         "Grundformen des Verkehrsverhaltens": "no-resource",
-        "Überholen": "no-resource",
-        "Verhalten gegenüber Fußgängern": "no-resource",
-        # 'Autobahn': [0]
-    }
+        "Überholen": "all",
+        # "Verhalten gegenüber Fußgängern": "all",
+        "Autobahn": "all",
+    },
+    "Verhalten im Straßenverkehr": {
+        "Halten und Parken": "all",
+        "Blaues Blinklicht und gelbes Blinklicht": [5],
+        "Besondere Verkehrslagen": "all",
+        "Straßenbenutzung": "all",
+    },
+    "Verkehrszeichen": {
+        "Vorschriftzeichen": "all",
+    },
 }

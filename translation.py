@@ -162,34 +162,50 @@ def translate_questions():
                     translated_question
                 )
 
-            sub_category_file_name = (
-                f"{config.translation_folder_prefix}/{category}/{subcategory}/data.json"
-            )
-            Path(f"{config.translation_folder_prefix}/{category}/{subcategory}").mkdir(
-                parents=True, exist_ok=True
-            )
-            with open(sub_category_file_name, "w", encoding="utf-8") as f:
-                f.write(
-                    jsonpickle.encode(
-                        all_translated_questions[category][subcategory], indent=2
-                    )
-                )
+            save_sub_category_to_file(all_translated_questions, category, subcategory)
 
-        category_file_name = f"{config.translation_folder_prefix}/{category}/data.json"
-        Path(f"{config.translation_folder_prefix}/{category}").mkdir(
-            parents=True, exist_ok=True
-        )
-        with open(category_file_name, "w", encoding="utf-8") as f:
-            f.write(jsonpickle.encode(all_translated_questions[category], indent=2))
+        save_category_to_file(all_translated_questions, category)
 
     if config.merge_all:
         all_translated_questions_file_name = (
             f"{config.translation_folder_prefix}/data.json"
         )
+        rename_old_file(all_translated_questions_file_name)
         with open(all_translated_questions_file_name, "w", encoding="utf-8") as f:
             f.write(jsonpickle.encode(all_translated_questions, indent=2))
 
     print("Translation complete!")
+
+
+def rename_old_file(file_name):
+    # if the file already exists, rename it to old.<filename>
+    if Path(file_name).exists():
+        os.renames(file_name, f"{file_name}.old")
+
+
+def save_category_to_file(all_translated_questions, category):
+    category_file_name = f"{config.translation_folder_prefix}/{category}/data.json"
+    rename_old_file(category_file_name)
+
+    Path(os.path.dirname(category_file_name)).mkdir(parents=True, exist_ok=True)
+    with open(category_file_name, "w", encoding="utf-8") as f:
+        f.write(jsonpickle.encode(all_translated_questions[category], indent=2))
+
+
+def save_sub_category_to_file(all_translated_questions, category, subcategory):
+    sub_category_file_name = (
+        f"{config.translation_folder_prefix}/{category}/{subcategory}/data.json"
+    )
+
+    # if the file already exists, rename it to old.<filename>
+    rename_old_file(sub_category_file_name)
+
+    Path(os.path.dirname(sub_category_file_name)).mkdir(parents=True, exist_ok=True)
+
+    with open(sub_category_file_name, "w", encoding="utf-8") as f:
+        f.write(
+            jsonpickle.encode(all_translated_questions[category][subcategory], indent=2)
+        )
 
 
 if __name__ == "__main__":
