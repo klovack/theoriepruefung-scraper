@@ -30,6 +30,8 @@ class TranslationService:
 def get_questions_from_disk(
     category: str, subcategory: str, questions: list[int | str] | Literal["all"] = "all"
 ):
+    print(f"Reading questions from disk: {category} -> {subcategory}")
+
     if not Path(f"{config.scrape_folder_prefix}/{category}/{subcategory}").exists():
         return None
 
@@ -85,6 +87,7 @@ def get_questions_from_disk(
 def get_translated_question(
     question: QuizQuestion, translation_service: TranslationService
 ):
+    print("Translating question: ", question.question)
     text = [question.question, *question.options]
     if question.sub_question is not None and len(question.sub_question) > 0:
         print(f"append sub question, {question.sub_question}")
@@ -117,16 +120,12 @@ def get_translated_question(
         question.resources,
     )
 
-    print(f"{translated_options}, {translated_sub_question}")
-
-    print(
-        f"{jsonpickle.encode(translated_question, indent=2)}, {translated_question.sub_question}, {translated_question.options}"
-    )
-
     return translated_question
 
 
 def translate_questions():
+    print("Translating...")
+
     translation_service = TranslationService()
 
     categories_to_translate = config.categories_to_translate
@@ -143,7 +142,17 @@ def translate_questions():
             )
 
             if list_of_questions is None:
+                print(
+                    "No questions found for category: ",
+                    category,
+                    " and subcategory: ",
+                    subcategory,
+                )
                 continue
+
+            print(
+                f"Retrieved {len(list_of_questions)} questions for {category} -> {subcategory}"
+            )
 
             for question in list_of_questions:
                 translated_question = get_translated_question(
@@ -180,7 +189,8 @@ def translate_questions():
         with open(all_translated_questions_file_name, "w", encoding="utf-8") as f:
             f.write(jsonpickle.encode(all_translated_questions, indent=2))
 
+    print("Translation complete!")
+
 
 if __name__ == "__main__":
     translate_questions()
-    # print("Translating...")
