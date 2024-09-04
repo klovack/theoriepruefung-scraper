@@ -50,7 +50,7 @@ def get_questions_from_disk(
         questions_data = [
             q
             for q in questions_data
-            if q.resources is not None and q.resources.type != "image"
+            if q.resource is not None and q.resource.type != "image"
         ]
         return questions_data
 
@@ -58,12 +58,12 @@ def get_questions_from_disk(
         questions_data = [
             q
             for q in questions_data
-            if q.resources is not None and q.resources.type != "video"
+            if q.resource is not None and q.resource.type != "video"
         ]
         return questions_data
 
     if questions == "no-resource":
-        questions_data = [q for q in questions_data if q.resources is None]
+        questions_data = [q for q in questions_data if q.resource is None]
         return questions_data
 
     # if element in the list is a string 1-5, transform it to an integer 1, 2, 3, 4, 5
@@ -115,9 +115,9 @@ def get_translated_question(
         translated_question_texts[0].text,
         translated_options,
         question.correct_options,
-        question.score,
+        int(question.score),
         translated_sub_question,
-        question.resources,
+        question.resource,
     )
 
     return translated_question

@@ -8,10 +8,19 @@ class QuizQuestionResource:
         self.type = type
 
 class QuizQuestion:
-    def __init__(self, question: str, options: list[str], correct_options: list[int], score: int, sub_question: Optional[str] = None, resources: Optional[QuizQuestionResource] = None):
+
+    def __init__(
+        self,
+        question: str,
+        options: list[str],
+        correct_options: list[int],
+        score: int,
+        sub_question: Optional[str] = None,
+        resource: Optional[QuizQuestionResource] = None,
+    ):
         self.question = question
         self.options = options
         self.correct_options = correct_options
         self.score = score
-        self.resources = resources
+        self.resource = resource
         self.sub_question = sub_question
