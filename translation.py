@@ -93,7 +93,9 @@ def get_translated_question(
         print(f"append sub question, {question.sub_question}")
         text.append(question.sub_question)
 
-    translated_question_texts = translation_service.translate(text, "ID")
+    translated_question_texts = translation_service.translate(
+        text, config.target_language.upper()
+    )
     translated_options = [
         to.text
         for to in translated_question_texts[

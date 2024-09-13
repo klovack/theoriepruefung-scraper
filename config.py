@@ -1,7 +1,8 @@
 from typing import Literal
 
 scrape_folder_prefix = 'scraped'
-translation_folder_prefix = 'translated'
+translation_folder_prefix = "en"
+target_language = "EN-US"
 
 # start_from inclusive
 start_from = 7
