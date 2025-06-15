@@ -4,6 +4,22 @@
 
 - Crawl the website to get all questions for Theorieprüfung Klasse B
 
+## Development
+
+1. Create and use the virtual environment
+
+	```sh
+	# use virtual environment (name can be anything)
+	pyenv virtualenv webscraping
+	pyenv activate webscraping
+	```
+
+2. Install the requirements
+
+	```sh
+	pip install -r requirements
+	```
+
 ## Scrape
 
 ```sh
